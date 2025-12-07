@@ -18,7 +18,7 @@ This library wraps the CPython API, allowing .NET developers to embed Python, ex
 
 ## Requirements
 
-- .NET Framework 4.8 or later (or .NET 6+)
+- .NET Framework 4.7 or later (or .NET 6+)
 - Python 3.x installed
 - Windows (C++/CLI requirement)
 
@@ -44,7 +44,7 @@ cd python-dotnet-bridge
 By default, the library searches for Python in the system PATH. To specify a custom Python installation:
 
 ```csharp
-Python.Initialize("C:\\Python311");
+Python.Initialize("C:\\Python313\\Python313.dll");
 ```
 
 ### Debug vs Release
@@ -63,8 +63,8 @@ This library is compiled against Python's release binaries for optimal performan
 
 1. Ensure Python include files and libraries are accessible
 2. Update project properties if needed:
-   - C/C++ → General → Additional Include Directories: `C:\Python311\include`
-   - Linker → General → Additional Library Directories: `C:\Python311\libs`
+   - C/C++ → General → Additional Include Directories: `C:\Python313\include`
+   - Linker → General → Additional Library Directories: `C:\Python313\libs`
 3. Build solution
 
 ## Project Structure
