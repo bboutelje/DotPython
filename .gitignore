@@ -2,3 +2,10 @@
 [Bb]in/ 
 [Oo]bj/ 
 .vs/ 
+ConsoleApp1/
+ConsoleApp2/
+PythonApplication1/
+TestResults/
+CPythonAPI/
+DotPython/x64/
+x64/

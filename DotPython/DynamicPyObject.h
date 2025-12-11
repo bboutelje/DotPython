@@ -68,11 +68,20 @@ namespace DotPython {
                 }
 
                 auto pyResult = gcnew ManagedPyObject(PyObject_Call(pyCallable->RawPointer, pyArgs->RawPointer, pyKwargs->RawPointer));
+
+                
+
                 if (!pyResult->IsValid())
                 {
                     if (PyErr_Occurred()) PyErr_Print();
                     return false;
                 }
+
+                if (pyResult->RawPointer == Py_None)
+                {
+                    return true;
+                }
+                
 
                 result = ConvertToManagedObject(pyResult);
 
@@ -157,13 +166,10 @@ namespace DotPython {
                     return false;
                 }
 
-                // 3. Use the CPython C API to set the attribute on the Python object.
-                // PyObject_SetAttrString returns 0 on success.
+                
                 int result = PyObject_SetAttrString(m_managedPyObject->RawPointer, memberName, pPyValue->RawPointer);
 
-                //Py_DECREF(pPyValue); // Clean up the PyObject* we created
-
-                return (result == 0); // Return true if successful, false otherwise.
+                return (result == 0);
             }
             catch (Exception^)
             {
@@ -182,46 +188,7 @@ namespace DotPython {
                 const char* funcName = context.marshal_as<const char*>(binder->Name);
                 auto pPyFunc = gcnew ManagedPyObject(PyObject_GetAttrString(m_managedPyObject->RawPointer, funcName), true);
 
-                
-
                 return this->TryInvokeCallable(pPyFunc, args, binder->CallInfo->ArgumentNames, result);
-
-
-                //int totalArgs = args->Length;
-                //int namedArgCount = binder->CallInfo->ArgumentNames->Count;
-                //int positionalArgCount = totalArgs - namedArgCount;
-
-                //auto pyArgs = gcnew ManagedPyObject(PyTuple_New(positionalArgCount));
-                //for (int i = 0; i < positionalArgCount; i++)
-                //{
-                //    auto managedPyObj = ConvertToPythonObject(args[i]);
-                //    PyTuple_SetItem(pyArgs->RawPointer, i, managedPyObj->RawPointer);
-                //}
-
-                //auto pyKwargs = gcnew ManagedPyObject(PyDict_New());
-                //for (int i = 0; i < namedArgCount; i++)
-                //{
-                //    auto argName = binder->CallInfo->ArgumentNames[i];
-
-                //    auto argValue = args[positionalArgCount + i];
-
-                //    auto managedPyKey = ConvertToPythonObject(argName);
-                //    auto mangedPyValue = ConvertToPythonObject(argValue);
-
-                //    PyDict_SetItem(pyKwargs->RawPointer, managedPyKey->RawPointer, mangedPyValue->RawPointer);
-                //}
-                //
-                //auto pPyResult = gcnew ManagedPyObject(PyObject_Call(pPyFunc->RawPointer, pyArgs->RawPointer, pyKwargs->RawPointer));
-
-                //if (pPyResult->RawPointer == nullptr)
-                //{
-                //    if (PyErr_Occurred()) PyErr_Print();
-                //    return false;
-                //}
-
-                //result = ConvertToManagedObject(pPyResult);
-
-                //return true;
             }
             catch (Exception^)
             {
@@ -261,7 +228,37 @@ namespace DotPython {
                 case System::Linq::Expressions::ExpressionType::Subtract:
                     pPyResult = gcnew ManagedPyObject(PyNumber_Subtract(pPyLeft->RawPointer, pPyRight->RawPointer));
                     break;
+                case System::Linq::Expressions::ExpressionType::Modulo: // % operator
+                    pPyResult = gcnew ManagedPyObject(PyNumber_Remainder(pPyLeft->RawPointer, pPyRight->RawPointer));
+                    break;
 
+                case System::Linq::Expressions::ExpressionType::LeftShift: // << operator
+                    pPyResult = gcnew ManagedPyObject(PyNumber_Lshift(pPyLeft->RawPointer, pPyRight->RawPointer));
+                    break;
+
+                case System::Linq::Expressions::ExpressionType::RightShift: // >> operator
+                    pPyResult = gcnew ManagedPyObject(PyNumber_Rshift(pPyLeft->RawPointer, pPyRight->RawPointer));
+                    break;
+
+                case System::Linq::Expressions::ExpressionType::And: // & operator
+                    pPyResult = gcnew ManagedPyObject(PyNumber_And(pPyLeft->RawPointer, pPyRight->RawPointer));
+                    break;
+
+                case System::Linq::Expressions::ExpressionType::Or: // | operator
+                    pPyResult = gcnew ManagedPyObject(PyNumber_Or(pPyLeft->RawPointer, pPyRight->RawPointer));
+                    break;
+
+                case System::Linq::Expressions::ExpressionType::ExclusiveOr: // ^ operator
+                    pPyResult = gcnew ManagedPyObject(PyNumber_Xor(pPyLeft->RawPointer, pPyRight->RawPointer));
+                    break;
+
+                case System::Linq::Expressions::ExpressionType::Power: // ** operator
+                    pPyResult = gcnew ManagedPyObject(PyNumber_Power(pPyLeft->RawPointer, pPyRight->RawPointer, Py_None)); // The third argument is 'mod' and can be Py_None for standard power.
+                    break;
+
+                case System::Linq::Expressions::ExpressionType::DivideAssign: // Floor division // operator
+                    pPyResult = gcnew ManagedPyObject(PyNumber_FloorDivide(pPyLeft->RawPointer, pPyRight->RawPointer));
+                    break;
                 default:
                     return false;
                 }
@@ -286,40 +283,6 @@ namespace DotPython {
 
             return TryInvokeCallable(m_managedPyObject, args, binder->CallInfo->ArgumentNames, result);
 
-            //PyObject* pPyResult = nullptr;
-            //result = nullptr;
-
-            //
-
-            //try
-            //{
-            //    auto pPyArgs = gcnew ManagedPyObject(PyTuple_New(args->Length));
-
-            //    for (int i = 0; i < args->Length; i++)
-            //    {
-            //        auto pPyArg = ConvertToPythonObject(args[i]);
-            //        PyTuple_SetItem(pPyArgs->RawPointer, i, pPyArg->RawPointer);
-            //    }
-
-            //    pPyResult = PyObject_CallObject(m_managedPyObject->RawPointer, pPyArgs->RawPointer);
-
-            //    
-            //    if (pPyResult == nullptr)
-            //    {
-            //        PyErr_Print();
-            //        return false;
-            //    }
-
-            //    auto pyObjectResultGuard = gcnew ManagedPyObject(pPyResult);
-            //    result = ConvertToManagedObject(pyObjectResultGuard);
-
-
-            //    return true;
-            //}
-            //catch (System::Exception^)
-            //{
-            //    return false;
-            //}
         }
 
         [returnvalue:System::Runtime::CompilerServices::DynamicAttribute]
@@ -342,31 +305,6 @@ namespace DotPython {
             catch (Exception^ ex)
             {
                 Console::WriteLine("Managed Exception during GetAttr: {0}", ex->Message);
-                return nullptr;
-            }
-        }
-
-        DynamicPyObject^ CreateInstance(... array<Object^>^ args)
-        {
-            try
-            {
-
-
-
-                auto pArgs = ConvertToPythonObject(args);
-                auto tuple = gcnew ManagedPyObject(PyList_AsTuple(pArgs->RawPointer));
-                auto newInstance = PyObject_Call(m_managedPyObject->RawPointer, tuple->RawPointer, NULL);
-
-                if (newInstance == nullptr)
-                {
-                    throw gcnew Exception("Failed to create Python instance. Check Python traceback for details.");
-                }
-
-                return gcnew DynamicPyObject(gcnew ManagedPyObject(newInstance));
-            }
-            catch (Exception^ ex)
-            {
-                Console::WriteLine("Python Exception during CreateInstance: {0}", ex->Message);
                 return nullptr;
             }
         }

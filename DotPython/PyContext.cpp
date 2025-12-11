@@ -124,3 +124,47 @@ void DotPython::PyContext::Execute(String^ code)
     }
     
 }
+
+void DotPython::PyContext::AddToSysPath(String^ path)
+{
+    // Convert managed string to native
+    pin_ptr<const wchar_t> wchPath = PtrToStringChars(path);
+
+    // Get sys module
+    PyObject* sysModule = PyImport_ImportModule("sys");
+    if (sysModule == nullptr) {
+        PyErr_Print();
+        throw gcnew InvalidOperationException("Failed to import sys module");
+    }
+
+    // Get sys.path list
+    PyObject* sysPath = PyObject_GetAttrString(sysModule, "path");
+    if (sysPath == nullptr) {
+        Py_DECREF(sysModule);
+        PyErr_Print();
+        throw gcnew InvalidOperationException("Failed to get sys.path");
+    }
+
+    // Convert path to Python string
+    PyObject* pyPath = PyUnicode_FromWideChar(wchPath, -1);
+    if (pyPath == nullptr) {
+        Py_DECREF(sysPath);
+        Py_DECREF(sysModule);
+        PyErr_Print();
+        throw gcnew InvalidOperationException("Failed to convert path to Python string");
+    }
+
+    // Insert at beginning of sys.path (index 0 = highest priority)
+    int result = PyList_Insert(sysPath, 0, pyPath);
+
+    // Cleanup
+    Py_DECREF(pyPath);
+    Py_DECREF(sysPath);
+    Py_DECREF(sysModule);
+
+    if (result != 0) {
+        PyErr_Print();
+        throw gcnew InvalidOperationException(
+            String::Format("Failed to add '{0}' to sys.path", path));
+    }
+}

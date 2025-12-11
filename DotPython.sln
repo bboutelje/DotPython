@@ -7,8 +7,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DotPython", "DotPython\DotP
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotPython.Tests", "DotPython.Tests\DotPython.Tests.csproj", "{FC3CB310-13DF-4473-A23B-CBB65D8F8517}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp1", "ConsoleApp1\ConsoleApp1.csproj", "{5859C9F0-E164-4AEA-89C1-501361A26987}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,18 +41,6 @@ Global
 		{FC3CB310-13DF-4473-A23B-CBB65D8F8517}.Release|x64.Build.0 = Release|x64
 		{FC3CB310-13DF-4473-A23B-CBB65D8F8517}.Release|x86.ActiveCfg = Release|Any CPU
 		{FC3CB310-13DF-4473-A23B-CBB65D8F8517}.Release|x86.Build.0 = Release|Any CPU
-		{5859C9F0-E164-4AEA-89C1-501361A26987}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5859C9F0-E164-4AEA-89C1-501361A26987}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5859C9F0-E164-4AEA-89C1-501361A26987}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{5859C9F0-E164-4AEA-89C1-501361A26987}.Debug|x64.Build.0 = Debug|Any CPU
-		{5859C9F0-E164-4AEA-89C1-501361A26987}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{5859C9F0-E164-4AEA-89C1-501361A26987}.Debug|x86.Build.0 = Debug|Any CPU
-		{5859C9F0-E164-4AEA-89C1-501361A26987}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5859C9F0-E164-4AEA-89C1-501361A26987}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5859C9F0-E164-4AEA-89C1-501361A26987}.Release|x64.ActiveCfg = Release|x64
-		{5859C9F0-E164-4AEA-89C1-501361A26987}.Release|x64.Build.0 = Release|x64
-		{5859C9F0-E164-4AEA-89C1-501361A26987}.Release|x86.ActiveCfg = Release|Any CPU
-		{5859C9F0-E164-4AEA-89C1-501361A26987}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

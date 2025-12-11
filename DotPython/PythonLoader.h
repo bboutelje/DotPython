@@ -13,34 +13,24 @@ using namespace System::IO;
 using namespace System::Linq;
 using namespace Microsoft::Win32;
 
-// Define the function signatures for the CPython API.
-// We use Cdecl calling convention as it's the standard for C libraries.
 typedef int(__cdecl* PyInitializeExFunc)(int);
 typedef int(__cdecl* PyFinalizeExFunc)(void);
 typedef void(__cdecl* PyRunSimpleStringFlagsFunc)(const char*, void*);
 
-// A simple C++/CLI wrapper class to manage the CPython DLL.
 public ref class PythonLoader
 {
 private:
-    // Handle to the loaded DLL.
     HMODULE pyDllHandle;
 
-    // Pointers to the native CPython functions.
     PyInitializeExFunc pyInitializeEx;
     PyFinalizeExFunc pyFinalizeEx;
     PyRunSimpleStringFlagsFunc pyRunSimpleStringFlags;
 
-    
-
 public:
-    // Constructor
     PythonLoader() : pyDllHandle(NULL), pyInitializeEx(nullptr), pyFinalizeEx(nullptr), pyRunSimpleStringFlags(nullptr) {}
 
-    // Destructor to ensure the DLL is unloaded properly.
     !PythonLoader()
     {
-        // Unload the DLL if it was loaded.
         if (pyDllHandle != NULL)
         {
             FreeLibrary(pyDllHandle);
@@ -48,13 +38,8 @@ public:
         }
     }
 
-
-    // Helper method to find the Python DLL by checking common paths.
     System::String^ FindPythonDll()
     {
-        // 1. Check for the PYTHONNET_PYDLL environment variable first,
-        // which mimics the high-priority check in Python.NET.
-
 
         System::String^ envVarPath;
 #ifdef _DEBUG
@@ -97,8 +82,6 @@ public:
         return nullptr;
     }
 
-
-    // Public method to load the Python DLL and initialize the interpreter.
     bool SetDllAndInitialize(System::String^ dllPath)
     {
         if (System::String::IsNullOrEmpty(dllPath))
@@ -107,10 +90,8 @@ public:
             return false;
         }
 
-        // Convert the managed System::String to a native wide-character string.
         pin_ptr<const wchar_t> wDllPath = PtrToStringChars(dllPath);
 
-        // Load the Python DLL from the specified path.
         pyDllHandle = LoadLibraryW(wDllPath);
         if (pyDllHandle == NULL)
         {
@@ -118,7 +99,6 @@ public:
             return false;
         }
 
-        // Get the function pointers for the required CPython functions.
         pyInitializeEx = (PyInitializeExFunc)GetProcAddress(pyDllHandle, "Py_InitializeEx");
         pyFinalizeEx = (PyFinalizeExFunc)GetProcAddress(pyDllHandle, "Py_FinalizeEx");
         pyRunSimpleStringFlags = (PyRunSimpleStringFlagsFunc)GetProcAddress(pyDllHandle, "PyRun_SimpleStringFlags");
@@ -131,43 +111,25 @@ public:
             return false;
         }
 
-        // Initialize the Python interpreter.
-
+        
         pin_ptr<const wchar_t> pWchar = PtrToStringChars(GetPythonHomeFromRegistry());
         Py_SetPythonHome(pWchar);
-        pyInitializeEx(0); // Pass 0 to avoid installing signal handlers.
+        pyInitializeEx(0);
         System::Console::WriteLine("Python interpreter initialized successfully.");
 
         return true;
     }
 
-    // Public method to execute a simple Python string.
-    void RunString(System::String^ code)
-    {
-        if (pyRunSimpleStringFlags == nullptr)
-        {
-            System::Console::WriteLine("ERROR: Python interpreter is not initialized.");
-            return;
-        }
-
-        // Convert managed string to native char* for execution.
-        msclr::interop::marshal_context context;
-        const char* nativeCode = context.marshal_as<const char*>(code);
-
-        pyRunSimpleStringFlags(nativeCode, nullptr);
-    }
+    
 
     static String^ GetPythonHomeFromRegistry()
     {
-        // Path to the Python core registry key. The version number will vary.
         String^ keyPath = "SOFTWARE\\Python\\PythonCore";
         String^ latestVersion = nullptr;
 
-        // Open the registry key for HKEY_CURRENT_USER
         RegistryKey^ currentUserKey = Registry::CurrentUser->OpenSubKey(keyPath);
         if (currentUserKey != nullptr)
         {
-            // Find the latest Python version installed by iterating through the keys
             for each (String ^ version in currentUserKey->GetSubKeyNames())
             {
                 if (latestVersion == nullptr || String::Compare(version, latestVersion, StringComparison::OrdinalIgnoreCase) > 0)
@@ -191,12 +153,10 @@ public:
             currentUserKey->Close();
         }
 
-        // Also check HKEY_LOCAL_MACHINE for all-users installations.
         latestVersion = nullptr;
         RegistryKey^ localMachineKey = Registry::LocalMachine->OpenSubKey(keyPath);
         if (localMachineKey != nullptr)
         {
-            // Find the latest Python version installed.
             for each (String ^ version in localMachineKey->GetSubKeyNames())
             {
                 if (latestVersion == nullptr || String::Compare(version, latestVersion, StringComparison::OrdinalIgnoreCase) > 0)
@@ -224,43 +184,5 @@ public:
     }
     
 
-    // Public method to finalize the Python interpreter.
-    /*void Finalize()
-    {
-        if (pyFinalizeEx != nullptr)
-        {
-            pyFinalizeEx();
-            System::Console::WriteLine("Python interpreter finalized.");
-        }
-    }*/
+    
 };
-//
-//int main(array<System::String^>^ args)
-//{
-//    // Create an instance of the loader class.
-//    PythonLoader^ loader = gcnew PythonLoader();
-//    System::String^ pythonDllPath = nullptr;
-//
-//    try
-//    {
-//        // First, find the DLL.
-//        pythonDllPath = loader->FindPythonDll();
-//
-//        // If a DLL was found, load it and initialize Python.
-//        if (loader->SetDllAndInitialize(pythonDllPath))
-//        {
-//            // Run a simple Python script.
-//            loader->RunString("import sys; print('Hello from Python. Version:', sys.version)");
-//        }
-//    }
-//    finally
-//    {
-//        // Always finalize the Python interpreter.
-//        loader->Finalize();
-//    }
-//
-//    System::Console::WriteLine("Press any key to exit...");
-//    System::Console::ReadKey();
-//
-//    return 0;
-//}

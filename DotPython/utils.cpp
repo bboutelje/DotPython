@@ -39,7 +39,8 @@ Object^ DotPython::ConvertToManagedObject(ManagedPyObject^ pyObjectGuard)
 
     if (PySequence_Check(pyObjectGuard->RawPointer)) // <-- Use the standard PySequence_Check function
     {
-        if (PyList_Check(pyObjectGuard->RawPointer) || PyTuple_Check(pyObjectGuard->RawPointer))
+        return gcnew DotPython::DynamicPyObjectCollection(pyObjectGuard);
+        /*if (PyList_Check(pyObjectGuard->RawPointer) || PyTuple_Check(pyObjectGuard->RawPointer))
         {
             Py_ssize_t size = PyList_Check(pyObjectGuard->RawPointer) ? PyList_Size(pyObjectGuard->RawPointer) : PyTuple_Size(pyObjectGuard->RawPointer);
 
@@ -53,25 +54,7 @@ Object^ DotPython::ConvertToManagedObject(ManagedPyObject^ pyObjectGuard)
             return managedArray;
         }
 
-        return gcnew DotPython::DynamicPyObjectCollection(pyObjectGuard);
-
-
-        //// Now handle generic sequence types like array.array by converting them to a list
-        ////PyObject* pPyList = PySequence_ToList(pyObject); // Converts sequence to a standard Python list (New reference)
-        //auto pPyList = gcnew ManagedPyObject(PyObject_CallMethod(pyObjectGuard->RawPointer, "tolist", nullptr));
-
-        //if (pPyList == nullptr) {
-        //    // Handle error
-        //    return nullptr;
-        //}
-
-        //// Now convert the standard Python list to a managed array 
-        //System::Object^ managedResult = ConvertListToManagedArray(pPyList->RawPointer);
-
-
-        //if (managedResult != nullptr) {
-        //    return managedResult;
-        //}
+        return gcnew DotPython::DynamicPyObjectCollection(pyObjectGuard);*/
     }
 
     
@@ -122,7 +105,7 @@ DotPython::ManagedPyObject^ DotPython::ConvertToPythonObject(Object^ managedObje
         auto pPyObject = gcnew ManagedPyObject(dynamicWrapper->GetManagedPyObject()->RawPointer);
         return pPyObject;
     }
-
+   
     // Check for System::Single (C# float)
     if (managedObject->GetType() == System::Single::typeid)
     {
@@ -160,6 +143,14 @@ DotPython::ManagedPyObject^ DotPython::ConvertToPythonObject(Object^ managedObje
         msclr::interop::marshal_context context;
         const wchar_t* wstr = context.marshal_as<const wchar_t*>(strValue);
         return gcnew ManagedPyObject(PyUnicode_FromWideChar(wstr, strValue->Length));
+    }
+
+    if (managedObject->GetType() == System::Boolean::typeid)
+    {
+        bool val = safe_cast<bool>(managedObject);
+        auto pyBool = gcnew ManagedPyObject(val ? Py_True : Py_False);
+        
+        return pyBool;
     }
 
     if (managedObject->GetType() == System::Char::typeid)

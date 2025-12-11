@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <!-- Read PYTHONHOME environment variable -->
+    <PythonHome Condition="'$(PythonHome)' == ''">$(PYTHONHOME)</PythonHome>
+    
+    <!-- Fallback if PYTHONHOME not set -->
+    <PythonHome Condition="'$(PythonHome)' == ''">C:\Python311</PythonHome>
+  </PropertyGroup>
+  
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <!-- Add Python include directory -->
+      <AdditionalIncludeDirectories>$(PythonHome)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <!-- Add Python library directory -->
+      <AdditionalLibraryDirectories>$(PythonHome)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+</Project>

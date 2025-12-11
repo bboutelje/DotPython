@@ -13,4 +13,10 @@
     <ProjectReference Include="..\DotPython\DotPython.vcxproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="hello_app.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

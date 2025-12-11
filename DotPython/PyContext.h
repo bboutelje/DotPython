@@ -27,6 +27,7 @@ namespace DotPython {
 
         void Execute(String^ code);
         
+        void AddToSysPath(String^ path);
 
     };
 
