@@ -11,18 +11,13 @@ using namespace System::Linq::Expressions;
 namespace DotPython {
     public ref class DynamicPyObjectCollection : public DynamicPyObject, System::Collections::Generic::IEnumerable<DynamicPyObject^>
     {
-    private:
-
-
 
     public:
 
         DynamicPyObjectCollection(ManagedPyObject^ pyObject) : DynamicPyObject(pyObject) {}
 
-        virtual System::Collections::Generic::IEnumerator<DynamicPyObject^>^ GetEnumerator()
-        {
-            return gcnew PyObjectEnumerator(m_managedPyObject);
-        }
+        virtual System::Collections::Generic::IEnumerator<DynamicPyObject^>^ GetEnumerator() override;
+        
 
         virtual System::Collections::IEnumerator^ GetEnumerator_NonGeneric()
             = System::Collections::IEnumerable::GetEnumerator

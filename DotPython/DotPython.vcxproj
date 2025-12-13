@@ -152,7 +152,9 @@
     <ClCompile Include="DynamicPyObject.cpp" />
     <ClCompile Include="Purgatory.cpp" />
     <ClCompile Include="PyContext.cpp" />
+    <ClCompile Include="PyObjectEnumerator.cpp" />
     <ClCompile Include="Python.cpp" />
+    <ClCompile Include="PythonLoader.cpp" />
     <ClCompile Include="UnmanagedPyObject.cpp" />
     <ClCompile Include="utils.cpp" />
   </ItemGroup>

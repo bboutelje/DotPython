@@ -2,9 +2,30 @@
 #include "Python.h"
 
 
-//const char* DotPython::Python::ConvertStringToConstChar(String^ managedString);
-//{
-//    IntPtr unmanagedPointer = Marshal::StringToHGlobalAnsi(managedString);
-//    const char* c_string = static_cast<const char*>(unmanagedPointer.ToPointer());
-//    return c_string;
-//}
+void DotPython::Python::Initialize()
+{
+    try
+    {
+        auto loader = gcnew PythonLoader();
+
+        auto pythonDllPath = loader->FindPythonDll();
+        loader->SetDllAndInitialize(pythonDllPath);
+    }
+    catch (Exception^ ex)
+    {
+        int i = 0;
+    }
+}
+
+void DotPython::Python::Initialize(String^ pythonDllPath)
+{
+    try
+    {
+        auto loader = gcnew PythonLoader();
+        loader->SetDllAndInitialize(pythonDllPath);
+    }
+    catch (Exception^ ex)
+    {
+        int i = 0;
+    }
+}

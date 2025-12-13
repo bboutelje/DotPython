@@ -83,6 +83,12 @@
     <ClCompile Include="Purgatory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PyObjectEnumerator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PythonLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="app.rc">
