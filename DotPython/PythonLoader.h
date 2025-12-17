@@ -1,8 +1,6 @@
-// This is a C++/CLI project file. It must be compiled with the /clr option.
-
 #include <iostream>
-#include <windows.h> // For LoadLibraryW and GetProcAddress
-#include <vcclr.h>   // For marshal_as to convert managed strings to native
+#include <windows.h>
+#include <vcclr.h>
 #include <vector>
 #include <msclr\marshal.h>
 #include <Python.h>
@@ -25,21 +23,15 @@ private:
     PyInitializeExFunc pyInitializeEx;
     PyFinalizeExFunc pyFinalizeEx;
     PyRunSimpleStringFlagsFunc pyRunSimpleStringFlags;
+    
 
 public:
     PythonLoader() : pyDllHandle(NULL), pyInitializeEx(nullptr), pyFinalizeEx(nullptr), pyRunSimpleStringFlags(nullptr) {}
 
     !PythonLoader();
-    
 
-    System::String^ FindPythonDll();
+    System::String^ FindPythonDllInPath();
     
     bool SetDllAndInitialize(System::String^ dllPath);
-    
 
-    static String^ GetPythonHomeFromRegistry();
-    
-    
-
-    
 };

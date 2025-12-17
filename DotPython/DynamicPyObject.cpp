@@ -62,8 +62,6 @@ bool DotPython::DynamicPyObject::TryInvokeCallable(ManagedPyObject^ pyCallable, 
 
         auto pyResult = gcnew ManagedPyObject(PyObject_Call(pyCallable->RawPointer, pyArgs->RawPointer, pyKwargs->RawPointer));
 
-
-
         if (!pyResult->IsValid())
         {
             if (PyErr_Occurred()) PyErr_Print();

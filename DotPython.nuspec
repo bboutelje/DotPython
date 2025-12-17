@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package>
+  <metadata>
+    <id>DotPython</id>
+    <version>$version$</version> <authors>Bruce Boutelje</authors>
+    <description>.NET interop access to Python ecosystem when using Windows</description>
+    <license type="expression">MIT</license>
+    <projectUrl>https://github.com/bboutelje/DotPython</projectUrl>
+    <repository type="git" url="https://github.com/bboutelje/DotPython" branch="main" />
+    <tags>.NET CppCli Python Interop Binding Scripting net472 Windows Native x64</tags>
+    <readme>NuGet.README.md</readme>
+    
+    <dependencies>
+      <group targetFramework="net48">
+        </group>
+    </dependencies>
+
+  </metadata>
+  <files>
+    <file src="x64\Release\DotPython.dll" target="lib\net48\" />
+    <file src="x64\Release\DotPython.xml" target="lib\net48\" />
+  </files>
+
+
+</package>

@@ -8,7 +8,7 @@ void DotPython::Python::Initialize()
     {
         auto loader = gcnew PythonLoader();
 
-        auto pythonDllPath = loader->FindPythonDll();
+        auto pythonDllPath = loader->FindPythonDllInPath();
         loader->SetDllAndInitialize(pythonDllPath);
     }
     catch (Exception^ ex)

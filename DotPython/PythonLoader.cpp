@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "PythonLoader.h"
+#include <codecvt>
+#include <locale>
 
 PythonLoader::!PythonLoader()
 {
@@ -10,145 +12,75 @@ PythonLoader::!PythonLoader()
     }
 }
 
-System::String^ PythonLoader::FindPythonDll()
+std::wstring s2ws(const std::string& str)
 {
+    using convert_type = std::codecvt_utf8<wchar_t>;
+    std::wstring_convert<convert_type, wchar_t> converter;
+    return converter.from_bytes(str);
+}
 
-    System::String^ envVarPath;
-#ifdef _DEBUG
-    envVarPath = System::Environment::GetEnvironmentVariable("PYTHONNET_PYDLL");
-#else
-    envVarPath = System::Environment::GetEnvironmentVariable("PYTHONNET_PYDLL");
-#endif
+String^ PythonLoader::FindPythonDllInPath()
+{
+    const int MIN_VERSION = 7;
+    const int MAX_VERSION = 14;
 
+    const int PATH_BUFFER_SIZE = 1024;
+    WCHAR pathBuffer[PATH_BUFFER_SIZE] = { 0 };
 
-    if (!System::String::IsNullOrEmpty(envVarPath))
+    for (int x = MAX_VERSION; x >= MIN_VERSION; --x)
     {
-        System::Console::WriteLine("Found PYTHONNET_PYDLL environment variable: {0}", envVarPath);
-        return envVarPath;
-    }
+        std::string dllNameNarrow = "python3" + std::to_string(x) + ".dll";
+        std::wstring dllNameWide = s2ws(dllNameNarrow);
+        DWORD result = SearchPath(
+            NULL,  
+            dllNameWide.c_str(),
+            NULL,     
+            PATH_BUFFER_SIZE,
+            pathBuffer,
+            NULL
+        );
 
-    // 2. Search common installation locations.
-    // This list can be expanded to include more paths.
-    cli::array<System::String^>^ potentialPaths = gcnew cli::array<System::String^>
-    {
-        "C:\\Python310\\python310.dll",
-            "C:\\Python311\\python311.dll",
-            "C:\\Python312\\python312.dll",
-            "C:\\Python313\\python313.dll",
-            "C:\\Program Files\\Python310\\python310.dll",
-            "C:\\Program Files\\Python311\\python311.dll",
-            "C:\\Program Files\\Python312\\python312.dll",
-            "C:\\Program Files\\Python313\\python313.dll",
-    };
-
-    for each (System::String ^ path in potentialPaths)
-    {
-        if (System::IO::File::Exists(path))
+        if (result > 0 && result < PATH_BUFFER_SIZE)
         {
-            System::Console::WriteLine("Found Python DLL at: {0}", path);
-            return path;
+            return gcnew String(pathBuffer);
         }
     }
 
-    System::Console::WriteLine("Could not find a Python DLL in common locations.");
     return nullptr;
 }
 
+
 bool PythonLoader::SetDllAndInitialize(System::String^ dllPath)
 {
-    if (System::String::IsNullOrEmpty(dllPath))
+    if (String::IsNullOrEmpty(dllPath))
     {
-        System::Console::WriteLine("ERROR: DLL path is null or empty.");
         return false;
     }
 
-    pin_ptr<const wchar_t> wDllPath = PtrToStringChars(dllPath);
+    pin_ptr<const wchar_t> pinnedPath = PtrToStringChars(dllPath);
+    std::wstring nativePath(pinnedPath);
 
-    pyDllHandle = LoadLibraryW(wDllPath);
-    if (pyDllHandle == NULL)
+    HMODULE hPython = LoadLibraryW(nativePath.c_str());
+    if (!hPython)
     {
-        System::Console::WriteLine("ERROR: Could not load the Python DLL from '{0}'", dllPath);
         return false;
     }
 
-    pyInitializeEx = (PyInitializeExFunc)GetProcAddress(pyDllHandle, "Py_InitializeEx");
-    pyFinalizeEx = (PyFinalizeExFunc)GetProcAddress(pyDllHandle, "Py_FinalizeEx");
-    pyRunSimpleStringFlags = (PyRunSimpleStringFlagsFunc)GetProcAddress(pyDllHandle, "PyRun_SimpleStringFlags");
-
-    if (pyInitializeEx == nullptr || pyFinalizeEx == nullptr || pyRunSimpleStringFlags == nullptr)
+    if (Py_IsInitialized())
     {
-        System::Console::WriteLine("ERROR: Could not find required functions in the Python DLL.");
-        FreeLibrary(pyDllHandle);
-        pyDllHandle = NULL;
+        return true;
+    }
+
+    PyConfig config;
+    PyConfig_InitPythonConfig(&config);
+
+    PyStatus status = Py_InitializeFromConfig(&config);
+    PyConfig_Clear(&config);
+
+    if (PyStatus_Exception(status))
+    {
         return false;
     }
 
-
-    pin_ptr<const wchar_t> pWchar = PtrToStringChars(GetPythonHomeFromRegistry());
-    Py_SetPythonHome(pWchar);
-    pyInitializeEx(0);
-    System::Console::WriteLine("Python interpreter initialized successfully.");
-
-    return true;
-}
-
-String^ PythonLoader::GetPythonHomeFromRegistry()
-{
-    String^ keyPath = "SOFTWARE\\Python\\PythonCore";
-    String^ latestVersion = nullptr;
-
-    RegistryKey^ currentUserKey = Registry::CurrentUser->OpenSubKey(keyPath);
-    if (currentUserKey != nullptr)
-    {
-        for each (String ^ version in currentUserKey->GetSubKeyNames())
-        {
-            if (latestVersion == nullptr || String::Compare(version, latestVersion, StringComparison::OrdinalIgnoreCase) > 0)
-            {
-                latestVersion = version;
-                break;
-            }
-        }
-
-        if (latestVersion != nullptr)
-        {
-            RegistryKey^ installKey = currentUserKey->OpenSubKey(latestVersion + "\\InstallPath");
-            if (installKey != nullptr)
-            {
-                String^ installPath = (String^)installKey->GetValue(nullptr);
-                installKey->Close();
-                currentUserKey->Close();
-                return installPath;
-            }
-        }
-        currentUserKey->Close();
-    }
-
-    latestVersion = nullptr;
-    RegistryKey^ localMachineKey = Registry::LocalMachine->OpenSubKey(keyPath);
-    if (localMachineKey != nullptr)
-    {
-        for each (String ^ version in localMachineKey->GetSubKeyNames())
-        {
-            if (latestVersion == nullptr || String::Compare(version, latestVersion, StringComparison::OrdinalIgnoreCase) > 0)
-            {
-                latestVersion = version;
-                break;
-            }
-        }
-
-        if (latestVersion != nullptr)
-        {
-            RegistryKey^ installKey = localMachineKey->OpenSubKey(latestVersion + "\\InstallPath");
-            if (installKey != nullptr)
-            {
-                String^ installPath = (String^)installKey->GetValue(nullptr);
-                installKey->Close();
-                localMachineKey->Close();
-                return installPath;
-            }
-        }
-        localMachineKey->Close();
-    }
-
-    return String::Empty;
+    return Py_IsInitialized();
 }
