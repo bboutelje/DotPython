@@ -13,7 +13,7 @@ namespace DotPython {
     {
     private:
         PyGILState_STATE m_state;
-        //std::vector<PyObject*> v_pyObjects;
+        
     public:
         PyContext();
         ~PyContext();

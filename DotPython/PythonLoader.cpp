@@ -21,7 +21,7 @@ std::wstring s2ws(const std::string& str)
 
 String^ PythonLoader::FindPythonDllInPath()
 {
-    const int MIN_VERSION = 7;
+    const int MIN_VERSION = 8;
     const int MAX_VERSION = 14;
 
     const int PATH_BUFFER_SIZE = 1024;

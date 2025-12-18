@@ -1,10 +1,12 @@
 #include "pch.h"
 #include "PyContext.h"
 #include "Purgatory.h"
+#include "Python.h"
 
 DotPython::PyContext::PyContext()
 {
-
+	if (!Py_IsInitialized())
+    	Python::Initialize();
     m_state = PyGILState_Ensure();
     Purgatory::DecrementAndClear();
 }

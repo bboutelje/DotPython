@@ -84,7 +84,7 @@ namespace DotPython.Tests
         }
 
         [TestMethod]
-        public void x()
+        public void NugetDocExampleTest()
         {
             var np = _pyContext!.Import("numpy");
 
