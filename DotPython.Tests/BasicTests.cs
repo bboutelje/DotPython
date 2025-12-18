@@ -47,7 +47,7 @@ namespace DotPython.Tests
         [TestMethod]
         public void ImportModuleTest()
         {
-            var helloApp = _pyContext!.Import("hello_app");
+            var helloApp = _pyContext!.Import("hello");
             Assert.AreEqual("Hello, Python programmer!", helloApp.greet_user());
         }
 
