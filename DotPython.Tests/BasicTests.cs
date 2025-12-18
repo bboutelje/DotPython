@@ -1,4 +1,5 @@
 ﻿using DotPython;
+using System;
 using System.Runtime.Remoting.Contexts;
 
 
@@ -12,10 +13,10 @@ namespace DotPython.Tests
         [ClassInitialize]
         public static void ClassInitialize(TestContext context)
         {
-            Python.Initialize();
             _pyContext = new PyContext();
             _pyContext.AddToSysPath(AppDomain.CurrentDomain.BaseDirectory);
         }
+
         [ClassCleanup]
         public static void ClassCleanup()
         {
@@ -81,5 +82,15 @@ namespace DotPython.Tests
             var c = a[3] * a[3];
             Assert.AreEqual(9, c);
         }
+
+        [TestMethod]
+        public void x()
+        {
+            var np = _pyContext!.Import("numpy");
+
+            var arr = np.array(new[] { 0, 1, 2 }, dtype: np.int32);
+            var mean = arr.mean();
+        }
+
     }
 }
