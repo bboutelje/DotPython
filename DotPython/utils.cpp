@@ -135,16 +135,17 @@ DotPython::ManagedPyObject^ DotPython::ConvertToPythonObject(Object^ managedObje
     System::Collections::ICollection^ collection = dynamic_cast<System::Collections::ICollection^>(managedObject);
     if (collection != nullptr)
     {
-        auto pPyList = gcnew ManagedPyObject(PyList_New(0));
+        auto pPyList = gcnew ManagedPyObject(PyList_New(collection->Count));
 
+        Py_ssize_t i = 0;
         for each (System::Object ^ item in collection)
         {
             auto pPyItem = ConvertToPythonObject(item);
             if (pPyItem != nullptr)
             {
-                
-                PyList_Append(pPyList->RawPointer, pPyItem->Release());
+                PyList_SetItem(pPyList->RawPointer, i, pPyItem->Release());
             }
+            i++;
         }
 
         return pPyList;
