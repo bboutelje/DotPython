@@ -11,14 +11,26 @@
     <readme>NuGet.README.md</readme>
     
     <dependencies>
-      <group targetFramework="net48">
-        </group>
+        <group targetFramework=".NETFramework4.7.2" />
+        <group targetFramework="net5.0-windows7.0" />
+        <group targetFramework="net6.0-windows7.0" />
+        <group targetFramework="net7.0-windows7.0" />
+        <group targetFramework="net8.0-windows7.0" />
+        <group targetFramework="net9.0-windows7.0" />
     </dependencies>
 
   </metadata>
   <files>
-    <file src="x64\Release\DotPython.dll" target="lib\net48\" />
-    <file src="x64\Release\DotPython.xml" target="lib\net48\" />
+    <file src="NuGet.README.md" target="" />
+    <file src="x64\Release\DotPython.dll" target="lib\net472\" />
+    <file src="x64\Release\DotPython.xml" target="lib\net472\" />
+
+    <file src="x64\Release\DotPython.dll" target="lib\net5.0-windows7.0\" />
+    <file src="x64\Release\DotPython.dll" target="lib\net6.0-windows7.0\" />
+    <file src="x64\Release\DotPython.dll" target="lib\net7.0-windows7.0\" />
+    <file src="x64\Release\DotPython.dll" target="lib\net8.0-windows7.0\" />
+    <file src="x64\Release\DotPython.dll" target="lib\net9.0-windows7.0\" />
+
   </files>
 
 
