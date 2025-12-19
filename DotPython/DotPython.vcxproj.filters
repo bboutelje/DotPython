@@ -104,6 +104,5 @@
     <None Include="ManagedPyObject.h">
       <Filter>Header Files</Filter>
     </None>
-    <None Include="packages.config" />
   </ItemGroup>
 </Project>
