@@ -1,0 +1,43 @@
+name: Publish DotPython to NuGet
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+# 1. ADD THIS: Allows GitHub to issue an OIDC token for the handshake
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build-and-publish:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup NuGet
+        uses: nuget/setup-nuget@v2
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      # 2. ADD THIS: The login step that exchanges the GitHub token for a temporary NuGet key
+      - name: NuGet Login
+        uses: NuGet/login@v1
+        with:
+          user: bboutelje # Your actual NuGet.org username (not email)
+
+      - name: Restore NuGet Packages
+        run: nuget restore DotPython.sln
+
+      - name: Build Solution
+        run: msbuild DotPython.sln /p:Configuration=Release
+
+      - name: Pack NuGet Package
+        run: nuget pack DotPython\DotPython.csproj -OutputDirectory . -Properties Configuration=Release
+
+      # 3. UPDATE THIS: Use the output from the login step as the key
+      - name: Push to NuGet
+        run: nuget push *.nupkg -Source https://api.nuget.org/v3/index.json -SkipDuplicate
