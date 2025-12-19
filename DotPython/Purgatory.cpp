@@ -19,16 +19,9 @@ void Purgatory::DecrementAndClear()
         {
             if (obj)
             {
-                long ref_count = Py_REFCNT(obj);
 
-                if (ref_count == 0) {
-                    // This should never happen, but just in case
-
-                    return;
-				}
-                
                 Py_DECREF(obj);
-                ref_count = Py_REFCNT(obj);
+                auto ref_count = Py_REFCNT(obj);
                 if (ref_count == 0) {
                     obj = nullptr;
 				}
