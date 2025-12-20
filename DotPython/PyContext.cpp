@@ -25,14 +25,51 @@ Object^ DotPython::PyContext::Import(String^ moduleName)
 
     if (!pModule->IsValid())
     {
-        PyErr_Print();
+        PyObject* pType = nullptr;
+        PyObject* pValue = nullptr;
+        PyObject* pTraceback = nullptr;
 
-        if (PyErr_Occurred()) {
-            PyErr_Clear();
+        PyErr_Fetch(&pType, &pValue, &pTraceback);
+
+        auto type = gcnew ManagedPyObject(pType);
+        auto value = gcnew ManagedPyObject(pValue);
+        auto traceback = gcnew ManagedPyObject(pTraceback);
+
+        String^ errorMessage = "Unknown Python error";
+
+        if (pValue != nullptr)
+        {
+            auto str = gcnew ManagedPyObject(PyObject_Str(pValue));
+            if (str->IsValid())
+            {
+                const char* errorStr = PyUnicode_AsUTF8(str->RawPointer);
+                if (errorStr != nullptr)
+                {
+                    errorMessage = gcnew String(errorStr);
+                }
+                
+            }
         }
 
-        throw gcnew InvalidOperationException(
-            String::Format("Python module import failed for '{0}'. See console output for Python traceback.", moduleName)
+        if (type->IsValid())
+        {
+            if (PyErr_GivenExceptionMatches(type->RawPointer, PyExc_ImportError) ||
+                PyErr_GivenExceptionMatches(type->RawPointer, PyExc_ModuleNotFoundError))
+            {
+                throw gcnew System::IO::FileNotFoundException(
+                    String::Format("Python module '{0}' not found: {1}", moduleName, errorMessage)
+                );
+            }
+            else if (PyErr_GivenExceptionMatches(type->RawPointer, PyExc_SyntaxError))
+            {
+                throw gcnew System::FormatException(
+                    String::Format("Syntax error in Python module '{0}': {1}", moduleName, errorMessage)
+                );
+            }
+        }
+
+        throw gcnew Exception(
+            String::Format("Python module import failed for '{0}': {1}", moduleName, errorMessage)
         );
     }
 
@@ -49,7 +86,7 @@ Object^ DotPython::PyContext::List(System::Collections::IEnumerable^ input)
 
     auto pyList = gcnew ManagedPyObject(PyList_New(0));
     if (pyList == nullptr) {
-        throw gcnew InvalidOperationException("Failed to create Python list");
+        throw gcnew OutOfMemoryException("Failed to create Python list");
     }
 
     try {
