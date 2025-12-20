@@ -42,7 +42,7 @@ jobs:
         run: nuget restore DotPython.sln
 
       - name: Build Solution
-        run: msbuild DotPython.sln /p:Configuration=Release
+        run: msbuild DotPython.sln /p:Configuration=Release /p:PYTHONDIR="$env:pythonLocation"
 
       - name: Pack NuGet Package
         run: nuget pack DotPython\DotPython.csproj -OutputDirectory . -Properties Configuration=Release
