@@ -2,36 +2,32 @@
 <package>
   <metadata>
     <id>DotPython</id>
-    <version>$version$</version> <authors>Bruce Boutelje</authors>
+    <version>$version$</version>
+    <authors>Bruce Boutelje</authors>
     <description>.NET interop access to Python ecosystem when using Windows</description>
     <license type="expression">MIT</license>
     <projectUrl>https://github.com/bboutelje/DotPython</projectUrl>
     <repository type="git" url="https://github.com/bboutelje/DotPython" branch="main" />
     <tags>.NET CppCli Python Interop Binding Scripting net472 Windows Native x64</tags>
     <readme>NuGet.README.md</readme>
-    
-    <dependencies>
-        <group targetFramework=".NETFramework4.7.2" />
-        <group targetFramework="net5.0-windows7.0" />
-        <group targetFramework="net6.0-windows7.0" />
-        <group targetFramework="net7.0-windows7.0" />
-        <group targetFramework="net8.0-windows7.0" />
-        <group targetFramework="net9.0-windows7.0" />
-    </dependencies>
 
+    <dependencies>
+      <group targetFramework="net472" />
+      <group targetFramework="net5.0-windows" />
+      <group targetFramework="net6.0-windows" />
+      <group targetFramework="net7.0-windows" />
+      <group targetFramework="net8.0-windows" />
+      <group targetFramework="net9.0-windows" />
+    </dependencies>
   </metadata>
   <files>
     <file src="NuGet.README.md" target="" />
     <file src="x64\Release\DotPython.dll" target="lib\net472\" />
     <file src="x64\Release\DotPython.xml" target="lib\net472\" />
-
-    <file src="x64\Release\DotPython.dll" target="lib\net5.0-windows7.0\" />
-    <file src="x64\Release\DotPython.dll" target="lib\net6.0-windows7.0\" />
-    <file src="x64\Release\DotPython.dll" target="lib\net7.0-windows7.0\" />
-    <file src="x64\Release\DotPython.dll" target="lib\net8.0-windows7.0\" />
-    <file src="x64\Release\DotPython.dll" target="lib\net9.0-windows7.0\" />
-
+    <file src="x64\Release\DotPython.dll" target="lib\net5.0-windows\" />
+    <file src="x64\Release\DotPython.dll" target="lib\net6.0-windows\" />
+    <file src="x64\Release\DotPython.dll" target="lib\net7.0-windows\" />
+    <file src="x64\Release\DotPython.dll" target="lib\net8.0-windows\" />
+    <file src="x64\Release\DotPython.dll" target="lib\net9.0-windows\" />
   </files>
-
-
 </package>
