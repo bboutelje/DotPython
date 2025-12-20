@@ -1,4 +1,4 @@
-name: Publish DotPython to NuGet
+﻿name: Publish DotPython to NuGet
 
 on:
   push:
@@ -40,9 +40,9 @@ jobs:
           $version = "${{ github.ref_name }}" -replace '^v', ''
           nuget pack DotPython.nuspec -OutputDirectory . -Version $version -Properties Configuration=Release
 
-      - name: NuGet Login
+      - name: NuGet Login (OIDC → temp API key)
         uses: NuGet/login@v1
-        id: login  # Add this ID
+        id: nuget_login
         with:
           user: bboutelje
 
