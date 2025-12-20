@@ -13,7 +13,6 @@ jobs:
   build-and-publish:
     runs-on: windows-latest
     steps:
-
       - name: Checkout Code
         uses: actions/checkout@v4
 
@@ -22,31 +21,27 @@ jobs:
         with:
           python-version: '3.13'
 
-      - name: Verify Python Header Path
-        run: |
-          python -c "import sysconfig; print(sysconfig.get_path('include'))"
-
       - name: Setup NuGet
         uses: nuget/setup-nuget@v2
 
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
 
-      # 2. ADD THIS: The login step that exchanges the GitHub token for a temporary NuGet key
       - name: NuGet Login
         uses: NuGet/login@v1
         with:
-          user: bboutelje # Your actual NuGet.org username (not email)
+          user: bboutelje
 
       - name: Restore NuGet Packages
         run: nuget restore DotPython.sln
 
       - name: Build Solution
+        # Use $env:pythonLocation to access the path set by setup-python
         run: msbuild DotPython.sln /p:Configuration=Release /p:PYTHONDIR="$env:pythonLocation"
 
       - name: Pack NuGet Package
         run: nuget pack DotPython\DotPython.csproj -OutputDirectory . -Properties Configuration=Release
 
-      # 3. UPDATE THIS: Use the output from the login step as the key
       - name: Push to NuGet
-        run: nuget push *.nupkg -Source https://api.nuget.org/v3/index.json -SkipDuplicate
+        # Make sure you have added NUGET_API_KEY to your GitHub Repo Secrets
+        run: nuget push *.nupkg -Source https://api.nuget.org/v3/index.json -SkipDuplicate -ApiKey ${{ secrets.NUGET_API_KEY }}
