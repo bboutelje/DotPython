@@ -124,7 +124,7 @@
       <GenerateXMLDocumentationFiles>true</GenerateXMLDocumentationFiles>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>python313.lib</AdditionalDependencies>
+      <AdditionalDependencies>python38.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(PYTHONDIR)\libs</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
