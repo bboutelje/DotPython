@@ -27,11 +27,6 @@ jobs:
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
 
-      - name: NuGet Login
-        uses: NuGet/login@v1
-        with:
-          user: bboutelje
-
       - name: Restore NuGet Packages
         run: nuget restore DotPython.sln
 
