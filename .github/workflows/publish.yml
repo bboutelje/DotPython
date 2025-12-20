@@ -42,7 +42,7 @@ jobs:
       - name: Pack NuGet Package
         run: |
           $version = "${{ github.ref_name }}" -replace '^v', ''
-          nuget pack DotPython\DotPython.nuspec -OutputDirectory . -Version $version -Properties Configuration=Release
+          nuget pack DotPython.nuspec -OutputDirectory . -Version $version -Properties Configuration=Release
 
       - name: Push to NuGet
         # Make sure you have added NUGET_API_KEY to your GitHub Repo Secrets
