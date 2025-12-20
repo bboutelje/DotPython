@@ -48,4 +48,4 @@ jobs:
 
       - name: Push to NuGet
         # Make sure you have added NUGET_API_KEY to your GitHub Repo Secrets
-        run: nuget push *.nupkg -Source https://api.nuget.org/v3/index.json -SkipDuplicate -ApiKey ${{ steps.login.outputs.token }}
+        run: nuget push *.nupkg -Source https://api.nuget.org/v3/index.json -SkipDuplicate -ApiKey ${{ steps.nuget_login.outputs.api-key }}
