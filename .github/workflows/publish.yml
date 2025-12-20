@@ -40,7 +40,7 @@ jobs:
         run: msbuild DotPython.sln /p:Configuration=Release /p:PYTHONDIR="$env:pythonLocation"
 
       - name: Pack NuGet Package
-        run: nuget pack DotPython.sln -OutputDirectory . -Properties Configuration=Release
+        run: nuget pack **\*.vcxproj -OutputDirectory . -Properties Configuration=Release
 
       - name: Push to NuGet
         # Make sure you have added NUGET_API_KEY to your GitHub Repo Secrets
