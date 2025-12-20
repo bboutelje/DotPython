@@ -5,7 +5,6 @@ on:
     tags:
       - 'v*'
 
-# 1. ADD THIS: Allows GitHub to issue an OIDC token for the handshake
 permissions:
   id-token: write
   contents: read
