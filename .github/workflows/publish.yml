@@ -13,8 +13,18 @@ jobs:
   build-and-publish:
     runs-on: windows-latest
     steps:
+
       - name: Checkout Code
         uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Verify Python Header Path
+        run: |
+          python -c "import sysconfig; print(sysconfig.get_path('include'))"
 
       - name: Setup NuGet
         uses: nuget/setup-nuget@v2
