@@ -44,6 +44,12 @@ jobs:
           $version = "${{ github.ref_name }}" -replace '^v', ''
           nuget pack DotPython.nuspec -OutputDirectory . -Version $version -Properties Configuration=Release
 
+      - name: NuGet Login
+        uses: NuGet/login@v1
+        id: login  # Add this ID
+        with:
+          user: bboutelje
+
       - name: Push to NuGet
         # Make sure you have added NUGET_API_KEY to your GitHub Repo Secrets
-        run: nuget push *.nupkg -Source https://api.nuget.org/v3/index.json -SkipDuplicate
+        run: nuget push *.nupkg -Source https://api.nuget.org/v3/index.json -SkipDuplicate -ApiKey ${{ steps.login.outputs.token }}
