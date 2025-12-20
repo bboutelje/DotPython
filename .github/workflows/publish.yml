@@ -39,6 +39,9 @@ jobs:
         # Use $env:pythonLocation to access the path set by setup-python
         run: msbuild DotPython.sln /p:Configuration=Release /p:PYTHONDIR="$env:pythonLocation"
 
+      - name: List Files for Debugging
+        run: dir /s
+
       - name: Pack NuGet Package
         run: nuget pack DotPython\DotPython.vcxproj -OutputDirectory . -Properties Configuration=Release
 
