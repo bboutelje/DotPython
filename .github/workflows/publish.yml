@@ -39,11 +39,8 @@ jobs:
         # Use $env:pythonLocation to access the path set by setup-python
         run: msbuild DotPython.sln /p:Configuration=Release /p:PYTHONDIR="$env:pythonLocation"
 
-      - name: List Files for Debugging
-        run: dir /s
-
       - name: Pack NuGet Package
-        run: nuget pack DotPython\DotPython.vcxproj -OutputDirectory . -Properties Configuration=Release
+        run: nuget pack DotPython\DotPython.nuspec -OutputDirectory . -Version ${{ github.ref_name }} -Properties Configuration=Release
 
       - name: Push to NuGet
         # Make sure you have added NUGET_API_KEY to your GitHub Repo Secrets
