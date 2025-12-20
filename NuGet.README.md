@@ -4,9 +4,9 @@ A .NET library that provides an optimized bridge between .NET and Python through
 
 ## Requirements
 
-- .NET Framework 4.7.2 or later, or .NET 5 or later
-- Works for Python 3.13, and should work on Python 3.8 and later in theory
-- Windows x64 operating system only
+- .NET Framework 4.7.2 or later
+- Python 3.12 or later
+- Windows x64 operating system
 
 
 ## Usage Example
