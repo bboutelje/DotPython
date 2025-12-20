@@ -35,6 +35,7 @@ jobs:
         run: msbuild DotPython.sln /p:Configuration=Release /p:PYTHONDIR="$env:pythonLocation"
 
       - name: Pack NuGet Package
+        shell: pwsh
         run: |
           $version = "${{ github.ref_name }}" -replace '^v', ''
           nuget pack DotPython.nuspec -OutputDirectory . -Version $version -Properties Configuration=Release
