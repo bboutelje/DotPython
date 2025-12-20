@@ -151,6 +151,24 @@ DotPython::ManagedPyObject^ DotPython::ConvertToPythonObject(Object^ managedObje
         return pPyList;
     }
 
+    System::Collections::IEnumerable^ enumerable = dynamic_cast<System::Collections::IEnumerable^>(managedObject);
+    if (collection != nullptr)
+    {
+        auto pPyList = gcnew ManagedPyObject(PyList_New(0));
+
+        for each (System::Object ^ item in enumerable)
+        {
+            auto pPyItem = ConvertToPythonObject(item);
+            if (pPyItem != nullptr)
+            {
+                PyList_Append(pPyList->RawPointer, pPyItem->RawPointer);
+            }
+            
+        }
+
+        return pPyList;
+    }
+
 
     PyErr_SetString(PyExc_TypeError, "Unsupported managed type for conversion.");
     return gcnew ManagedPyObject(& _Py_NoneStruct);
