@@ -152,7 +152,7 @@ DotPython::ManagedPyObject^ DotPython::ConvertToPythonObject(Object^ managedObje
     }
 
     System::Collections::IEnumerable^ enumerable = dynamic_cast<System::Collections::IEnumerable^>(managedObject);
-    if (collection != nullptr)
+    if (enumerable != nullptr)
     {
         auto pPyList = gcnew ManagedPyObject(PyList_New(0));
 

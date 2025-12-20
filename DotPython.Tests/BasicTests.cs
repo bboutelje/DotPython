@@ -92,5 +92,16 @@ namespace DotPython.Tests
             var mean = arr.mean();
         }
 
+        [TestMethod]
+        public void IEnumerableTest()
+        {
+            dynamic range = Enumerable.Range(0, 5);
+            
+            var builtins = _pyContext!.Import("builtins");
+            var sum = builtins.sum(range);
+
+            Assert.AreEqual(10, sum);
+        }
+
     }
 }
