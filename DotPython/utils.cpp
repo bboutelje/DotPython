@@ -54,8 +54,9 @@ DotPython::ManagedPyObject^ DotPython::ConvertToPythonObject(Object^ managedObje
         auto pPyObject = gcnew ManagedPyObject(dynamicWrapper->GetManagedPyObject()->RawPointer);
         return pPyObject;
     }
-   
-    if (managedObject->GetType() == System::Single::typeid)
+
+    Type^ type = managedObject->GetType();
+    if (type == System::Single::typeid)
     {
         float val = System::Convert::ToSingle(managedObject);
         auto pPyFloat = gcnew ManagedPyObject(PyFloat_FromDouble((double)val));
@@ -69,17 +70,17 @@ DotPython::ManagedPyObject^ DotPython::ConvertToPythonObject(Object^ managedObje
         return pPyFloat;
     }
 
-    if (managedObject->GetType() == double::typeid) {
+    if (type == double::typeid) {
         double dblValue = safe_cast<double>(managedObject);
         return gcnew ManagedPyObject(PyFloat_FromDouble(dblValue));
     }
 
-    if (managedObject->GetType() == int::typeid) {
+    if (type == int::typeid) {
         int intValue = safe_cast<int>(managedObject);
         return gcnew ManagedPyObject(PyLong_FromLong(intValue));
     }
 
-    if (managedObject->GetType() == String::typeid) {
+    if (type == String::typeid) {
         String^ strValue = safe_cast<String^>(managedObject);
 
         msclr::interop::marshal_context context;
@@ -87,15 +88,15 @@ DotPython::ManagedPyObject^ DotPython::ConvertToPythonObject(Object^ managedObje
         return gcnew ManagedPyObject(PyUnicode_FromWideChar(wstr, strValue->Length));
     }
 
-    if (managedObject->GetType() == System::Boolean::typeid)
+    if (type == System::Boolean::typeid)
     {
         bool val = safe_cast<bool>(managedObject);
         auto pyBool = gcnew ManagedPyObject(val ? Py_True : Py_False);
-        
+
         return pyBool;
     }
 
-    if (managedObject->GetType() == System::Char::typeid)
+    if (type == System::Char::typeid)
     {
         wchar_t managedChar = System::Convert::ToChar(managedObject);
 
@@ -117,7 +118,7 @@ DotPython::ManagedPyObject^ DotPython::ConvertToPythonObject(Object^ managedObje
             auto pyKey = ConvertToPythonObject(entry.Key);
             auto pyValue = ConvertToPythonObject(entry.Value);
 
-            
+
             if (pyKey->RawPointer && pyValue->RawPointer)
             {
                 if (PyDict_SetItem(pyDict->RawPointer, pyKey->Release(), pyValue->Release()) == -1)
@@ -132,6 +133,28 @@ DotPython::ManagedPyObject^ DotPython::ConvertToPythonObject(Object^ managedObje
     }
 
 
+    if (type->IsGenericType &&
+        type->GetGenericTypeDefinition() == System::Collections::Generic::HashSet<Object^>::typeid->GetGenericTypeDefinition())
+    {
+        System::Collections::IEnumerable^ hashSet = dynamic_cast<System::Collections::IEnumerable^>(managedObject);
+        if (hashSet != nullptr)
+        {
+            auto pPySet = gcnew ManagedPyObject(PySet_New(NULL));
+            if (!pPySet->IsValid()) {
+                return nullptr;
+            }
+            for each (System::Object ^ item in hashSet)
+            {
+                auto pPyItem = ConvertToPythonObject(item);
+                if (pPyItem != nullptr)
+                {
+                    PySet_Add(pPySet->RawPointer, pPyItem->RawPointer);
+                }
+            }
+            return pPySet;
+        }
+    }
+
     System::Collections::ICollection^ collection = dynamic_cast<System::Collections::ICollection^>(managedObject);
     if (collection != nullptr)
     {
@@ -143,7 +166,10 @@ DotPython::ManagedPyObject^ DotPython::ConvertToPythonObject(Object^ managedObje
             auto pPyItem = ConvertToPythonObject(item);
             if (pPyItem != nullptr)
             {
-                PyList_SetItem(pPyList->RawPointer, i, pPyItem->Release());
+                if (PyList_SetItem(pPyList->RawPointer, i, pPyItem->Release()) == -1)
+                {
+					return nullptr;
+                }
             }
             i++;
         }
