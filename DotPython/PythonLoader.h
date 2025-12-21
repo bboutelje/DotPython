@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include <windows.h>
 #include <vcclr.h>
@@ -5,6 +6,7 @@
 #include <msclr\marshal.h>
 #include <Python.h>
 #include <string>
+#include "PythonInitializer.h"
 
 using namespace System;
 using namespace System::IO;

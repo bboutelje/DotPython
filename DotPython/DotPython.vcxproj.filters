@@ -21,7 +21,7 @@
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Python.h">
+    <ClInclude Include="PythonInitializer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DynamicPyObject.h">
@@ -51,6 +51,9 @@
     <ClInclude Include="Purgatory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ExtensionMethods.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp">
@@ -59,7 +62,7 @@
     <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Python.cpp">
+    <ClCompile Include="PythonInitializer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DynamicPyObject.cpp">
@@ -87,6 +90,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PythonLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ExtensionMethods.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -9,6 +9,7 @@
 #include "ManagedPyObject.h"
 #include "StringMarshal.h"
 #include "UnmanagedPyObject.h"
+#include "ExtensionMethods.h"
 
 using namespace System;
 using namespace System::Collections;

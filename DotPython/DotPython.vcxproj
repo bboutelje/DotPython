@@ -129,13 +129,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ExtensionMethods.h" />
     <ClInclude Include="Purgatory.h" />
     <ClInclude Include="PyContext.h" />
     <ClInclude Include="PyObjectEnumerator.h" />
     <ClInclude Include="DynamicPyObjectCollection.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="DynamicPyObject.h" />
-    <ClInclude Include="Python.h" />
+    <ClInclude Include="PythonInitializer.h" />
     <ClInclude Include="PythonLoader.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="StringMarshal.h" />
@@ -145,6 +146,7 @@
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
     <ClCompile Include="DynamicPyObjectCollection.cpp" />
+    <ClCompile Include="ExtensionMethods.cpp" />
     <ClCompile Include="ManagedPyObject.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -156,7 +158,7 @@
     <ClCompile Include="Purgatory.cpp" />
     <ClCompile Include="PyContext.cpp" />
     <ClCompile Include="PyObjectEnumerator.cpp" />
-    <ClCompile Include="Python.cpp" />
+    <ClCompile Include="PythonInitializer.cpp" />
     <ClCompile Include="PythonLoader.cpp" />
     <ClCompile Include="UnmanagedPyObject.cpp" />
     <ClCompile Include="utils.cpp" />

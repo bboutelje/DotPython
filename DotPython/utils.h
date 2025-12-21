@@ -9,7 +9,7 @@ using namespace System;
 namespace DotPython {
 
 	Object^ ConvertToManagedObject(ManagedPyObject^ pyObject);
-	ManagedPyObject^ ConvertToPythonObject(Object^ managedObject);
+	//ManagedPyObject^ ConvertToPythonObject(Object^ managedObject);
 }
 
 

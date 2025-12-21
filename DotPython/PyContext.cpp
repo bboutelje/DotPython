@@ -1,7 +1,5 @@
 #include "pch.h"
 #include "PyContext.h"
-#include "Purgatory.h"
-#include "Python.h"
 
 DotPython::PyContext::PyContext()
 {
@@ -92,7 +90,7 @@ Object^ DotPython::PyContext::List(System::Collections::IEnumerable^ input)
     try {
         for each (Object ^ item in input) {
 
-            auto pyItem = ConvertToPythonObject(item);
+            auto pyItem = ExtensionMethods::ToPython(item);
 
             if (!pyItem->IsValid()) {
                 throw gcnew InvalidOperationException("Failed to convert item to Python object");
@@ -125,14 +123,14 @@ Object^ DotPython::PyContext::Dict(System::Collections::IDictionary^ managedDict
             Object^ managedKey = entry.Key;
             Object^ managedValue = entry.Value;
 
-            auto pKey = ConvertToPythonObject(managedKey);
+            auto pKey = ExtensionMethods::ToPython(managedKey);
 
             if (!pKey->IsValid() || pKey->RawPointer == Py_None) {
                 Console::WriteLine("Error: Converted key resulted in a non-hashable/null Python object. Skipping entry.");
                 continue;
             }
 
-            auto pValue = ConvertToPythonObject(managedValue);
+            auto pValue = ExtensionMethods::ToPython(managedValue);
 
             if (!pValue->IsValid()) {
                 Console::WriteLine("Error: Failed to convert value for key '{0}'.", managedKey);

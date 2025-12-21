@@ -2,6 +2,9 @@
 #include <Python.h>
 #include "DynamicPyObject.h"
 #include "DynamicPyObjectCollection.h"
+#include "ExtensionMethods.h"
+#include "Purgatory.h"
+#include "PythonInitializer.h"
 
 using namespace System;
 using namespace System::Collections;
