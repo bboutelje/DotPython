@@ -1,5 +1,6 @@
 ﻿using DotPython;
 using System;
+using System.Reflection.PortableExecutable;
 using System.Runtime.Remoting.Contexts;
 
 
@@ -69,7 +70,7 @@ namespace DotPython.Tests
                 { "c", 3 }
             };
 
-            var pyDict = _pyContext!.Dict(dict);
+            var pyDict = dict.ToPython();
             pyDict["a"] = 9;
             Assert.AreEqual(9, pyDict["a"]);
 
@@ -78,7 +79,7 @@ namespace DotPython.Tests
         [TestMethod]
         public void BinaryOptionTest()
         {
-            var a = _pyContext!.List(new[] { 0, 1, 2, 3 });
+            var a = new[] { 0, 1, 2, 3 }.ToPython();
             var c = a[3] * a[3];
             Assert.AreEqual(9, c);
         }
@@ -90,17 +91,30 @@ namespace DotPython.Tests
 
             var arr = np.array(new[] { 0, 1, 2 }, dtype: np.int32);
             var mean = arr.mean();
+            Assert.AreEqual(1.0, mean);
+
+            
         }
 
         [TestMethod]
         public void IEnumerableTest()
         {
-            dynamic range = Enumerable.Range(0, 5);
+            var range = Enumerable.Range(0, 5);
             
             var builtins = _pyContext!.Import("builtins");
             var sum = builtins.sum(range);
 
             Assert.AreEqual(10, sum);
+        }
+
+        [TestMethod]
+        public void HashSetTest()
+        {
+            var hashSet = new HashSet<string>() { "apple", "banana", "cherry" };
+            var builtins = _pyContext!.Import("builtins");
+            var pythonSet = builtins.set(hashSet);
+            hashSet.Remove("banana");
+            Assert.AreEqual(1, pythonSet.__contains__("apple"));
         }
 
     }
