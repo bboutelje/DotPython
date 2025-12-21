@@ -43,7 +43,7 @@ bool DotPython::DynamicPyObject::TryInvokeCallable(ManagedPyObject^ pyCallable, 
         auto pyArgs = gcnew ManagedPyObject(PyTuple_New(positionalArgCount));
         for (int i = 0; i < positionalArgCount; i++)
         {
-            auto managedPyObj = ExtensionMethods::ToPython(args[i]);
+            auto managedPyObj = ExtensionMethods::ToManagedPyObject(args[i]);
             PyTuple_SetItem(pyArgs->RawPointer, i, managedPyObj->Release());
         }
 
@@ -54,8 +54,8 @@ bool DotPython::DynamicPyObject::TryInvokeCallable(ManagedPyObject^ pyCallable, 
         {
             auto argValue = args[positionalArgCount + i];
 
-            auto managedPyKey = ExtensionMethods::ToPython(argName);
-            auto mangedPyValue = ExtensionMethods::ToPython(argValue);
+            auto managedPyKey = ExtensionMethods::ToManagedPyObject(argName);
+            auto mangedPyValue = ExtensionMethods::ToManagedPyObject(argValue);
 
             PyDict_SetItem(pyKwargs->RawPointer, managedPyKey->Release(), mangedPyValue->Release());
             i++;
@@ -178,7 +178,7 @@ bool DotPython::DynamicPyObject::TrySetMember(SetMemberBinder^ binder, Object^ v
         marshal_context context;
         const char* memberName = context.marshal_as<const char*>(binder->Name);
 
-        auto pPyValue = ExtensionMethods::ToPython(value);
+        auto pPyValue = ExtensionMethods::ToManagedPyObject(value);
         if (!pPyValue->RawPointer) {
             return false;
         }
@@ -217,7 +217,7 @@ bool DotPython::DynamicPyObject::TryInvokeMember(InvokeMemberBinder^ binder, arr
 bool DotPython::DynamicPyObject::TryBinaryOperation(System::Dynamic::BinaryOperationBinder^ binder, System::Object^ arg, System::Object^% result)
 {
     ManagedPyObject^ pPyLeft = m_managedPyObject;
-    ManagedPyObject^ pPyRight = ExtensionMethods::ToPython(arg);
+    ManagedPyObject^ pPyRight = ExtensionMethods::ToManagedPyObject(arg);
     ManagedPyObject^ pPyResult;
 
     result = nullptr;
@@ -333,7 +333,7 @@ bool DotPython::DynamicPyObject::TryGetIndex(System::Dynamic::GetIndexBinder^ bi
 
     Object^ managedKey = indexes[0];
 
-    auto pyKey = ExtensionMethods::ToPython(managedKey);
+    auto pyKey = ExtensionMethods::ToManagedPyObject(managedKey);
 
     if (pyKey->RawPointer == nullptr)
     {
@@ -363,8 +363,8 @@ bool DotPython::DynamicPyObject::TrySetIndex(System::Dynamic::SetIndexBinder^ bi
     }
 
     Object^ managedKey = indexes[0];
-    auto pyKey = ExtensionMethods::ToPython(managedKey);
-    auto pyValue = ExtensionMethods::ToPython(value);
+    auto pyKey = ExtensionMethods::ToManagedPyObject(managedKey);
+    auto pyValue = ExtensionMethods::ToManagedPyObject(value);
 
     if (pyKey->RawPointer == nullptr || pyValue->RawPointer == nullptr)
     {

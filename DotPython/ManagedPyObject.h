@@ -7,8 +7,7 @@ using namespace System;
 namespace DotPython
 {
 
-    [System::ComponentModel::EditorBrowsable(System::ComponentModel::EditorBrowsableState::Never)]
-    public ref class ManagedPyObject : IDisposable {
+    private ref class ManagedPyObject : IDisposable {
     private:
         PyObject* _pyObject;
         bool _isBorrowed;

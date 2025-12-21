@@ -23,10 +23,10 @@ namespace DotPython {
 
         [returnvalue:System::Runtime::CompilerServices::DynamicAttribute]
         Object^ Import(String^ moduleName);
-        [returnvalue:System::Runtime::CompilerServices::DynamicAttribute]
-        Object^ List(System::Collections::IEnumerable^ input);
-        [returnvalue:System::Runtime::CompilerServices::DynamicAttribute]
-        Object^ Dict(System::Collections::IDictionary^ managedDict);
+        //[returnvalue:System::Runtime::CompilerServices::DynamicAttribute]
+        //Object^ List(System::Collections::IEnumerable^ input);
+        //[returnvalue:System::Runtime::CompilerServices::DynamicAttribute]
+        //Object^ Dict(System::Collections::IDictionary^ managedDict);
 
         void Execute(String^ code);
         

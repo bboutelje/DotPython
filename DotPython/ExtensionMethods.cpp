@@ -2,7 +2,7 @@
 #include "ExtensionMethods.h"
 #include "DynamicPyObject.h"
 
-DotPython::ManagedPyObject^ DotPython::ExtensionMethods::ToPython(Object^ managedObject)
+DotPython::ManagedPyObject^ DotPython::ExtensionMethods::ToManagedPyObject(Object^ managedObject)
 {
     if (managedObject == nullptr) {
         Py_IncRef(Py_None);
@@ -77,8 +77,8 @@ DotPython::ManagedPyObject^ DotPython::ExtensionMethods::ToPython(Object^ manage
 
         for each (System::Collections::DictionaryEntry entry in netDictionary)
         {
-            auto pyKey = ToPython(entry.Key);
-            auto pyValue = ToPython(entry.Value);
+            auto pyKey = ToManagedPyObject(entry.Key);
+            auto pyValue = ToManagedPyObject(entry.Value);
 
 
             if (pyKey->RawPointer && pyValue->RawPointer)
@@ -107,7 +107,7 @@ DotPython::ManagedPyObject^ DotPython::ExtensionMethods::ToPython(Object^ manage
             }
             for each (System::Object ^ item in hashSet)
             {
-                auto pPyItem = ToPython(item);
+                auto pPyItem = ToManagedPyObject(item);
                 if (pPyItem != nullptr)
                 {
                     PySet_Add(pPySet->RawPointer, pPyItem->RawPointer);
@@ -125,7 +125,7 @@ DotPython::ManagedPyObject^ DotPython::ExtensionMethods::ToPython(Object^ manage
         Py_ssize_t i = 0;
         for each (System::Object ^ item in collection)
         {
-            auto pPyItem = ToPython(item);
+            auto pPyItem = ToManagedPyObject(item);
             if (pPyItem != nullptr)
             {
                 if (PyList_SetItem(pPyList->RawPointer, i, pPyItem->Release()) == -1)
@@ -146,7 +146,7 @@ DotPython::ManagedPyObject^ DotPython::ExtensionMethods::ToPython(Object^ manage
 
         for each (System::Object ^ item in enumerable)
         {
-            auto pPyItem = ToPython(item);
+            auto pPyItem = ToManagedPyObject(item);
             if (pPyItem != nullptr)
             {
                 PyList_Append(pPyList->RawPointer, pPyItem->RawPointer);
@@ -161,4 +161,9 @@ DotPython::ManagedPyObject^ DotPython::ExtensionMethods::ToPython(Object^ manage
     PyErr_SetString(PyExc_TypeError, "Unsupported managed type for conversion.");
     return gcnew ManagedPyObject(&_Py_NoneStruct);
 
+}
+
+System::Object^ DotPython::ExtensionMethods::ToPython(System::Object^ managedObject)
+{
+	return gcnew DynamicPyObject(ToManagedPyObject(managedObject));
 }

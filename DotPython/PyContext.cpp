@@ -76,80 +76,80 @@ Object^ DotPython::PyContext::Import(String^ moduleName)
     return wrapper;
 }
 
-Object^ DotPython::PyContext::List(System::Collections::IEnumerable^ input)
-{
-    if (input == nullptr) {
-        throw gcnew ArgumentNullException("input", "Input enumerable cannot be null");
-    }
+//Object^ DotPython::PyContext::List(System::Collections::IEnumerable^ input)
+//{
+//    if (input == nullptr) {
+//        throw gcnew ArgumentNullException("input", "Input enumerable cannot be null");
+//    }
+//
+//    auto pyList = gcnew ManagedPyObject(PyList_New(0));
+//    if (pyList == nullptr) {
+//        throw gcnew OutOfMemoryException("Failed to create Python list");
+//    }
+//
+//    try {
+//        for each (Object ^ item in input) {
+//
+//            auto pyItem = ExtensionMethods::ToManagedPyObject(item);
+//
+//            if (!pyItem->IsValid()) {
+//                throw gcnew InvalidOperationException("Failed to convert item to Python object");
+//            }
+//
+//            if (PyList_Append(pyList->RawPointer, pyItem->RawPointer) != 0) {
+//                throw gcnew InvalidOperationException("Failed to append to Python list");
+//            }
+//        }
+//
+//        return gcnew DynamicPyObjectCollection(pyList);
+//    }
+//    catch (Exception^) {
+//        throw;
+//    }
+//}
 
-    auto pyList = gcnew ManagedPyObject(PyList_New(0));
-    if (pyList == nullptr) {
-        throw gcnew OutOfMemoryException("Failed to create Python list");
-    }
-
-    try {
-        for each (Object ^ item in input) {
-
-            auto pyItem = ExtensionMethods::ToPython(item);
-
-            if (!pyItem->IsValid()) {
-                throw gcnew InvalidOperationException("Failed to convert item to Python object");
-            }
-
-            if (PyList_Append(pyList->RawPointer, pyItem->RawPointer) != 0) {
-                throw gcnew InvalidOperationException("Failed to append to Python list");
-            }
-        }
-
-        return gcnew DynamicPyObjectCollection(pyList);
-    }
-    catch (Exception^) {
-        throw;
-    }
-}
-
-Object^ DotPython::PyContext::Dict(System::Collections::IDictionary^ managedDict)
-{
-    auto pDict = gcnew ManagedPyObject(PyDict_New());
-    if (!pDict->IsValid()) {
-        Console::WriteLine("Error: Failed to create new Python dictionary.");
-        return nullptr;
-    }
-
-    IDictionaryEnumerator^ enumerator = managedDict->GetEnumerator();
-    try {
-        while (enumerator->MoveNext()) {
-            DictionaryEntry entry = enumerator->Entry;
-            Object^ managedKey = entry.Key;
-            Object^ managedValue = entry.Value;
-
-            auto pKey = ExtensionMethods::ToPython(managedKey);
-
-            if (!pKey->IsValid() || pKey->RawPointer == Py_None) {
-                Console::WriteLine("Error: Converted key resulted in a non-hashable/null Python object. Skipping entry.");
-                continue;
-            }
-
-            auto pValue = ExtensionMethods::ToPython(managedValue);
-
-            if (!pValue->IsValid()) {
-                Console::WriteLine("Error: Failed to convert value for key '{0}'.", managedKey);
-                return nullptr;
-            }
-
-            if (PyDict_SetItem(pDict->RawPointer, pKey->Release(), pValue->Release()) < 0) {
-                Console::WriteLine("Error: Failed to set item in Python dictionary.");
-                return nullptr;
-            }
-        }
-    }
-    catch (Exception^ ex) {
-        Console::WriteLine("An unexpected managed error occurred during iteration: {0}", ex->Message);
-        return nullptr;
-    }
-
-    return gcnew DynamicPyObjectCollection(pDict);
-}
+//Object^ DotPython::PyContext::Dict(System::Collections::IDictionary^ managedDict)
+//{
+//    auto pDict = gcnew ManagedPyObject(PyDict_New());
+//    if (!pDict->IsValid()) {
+//        Console::WriteLine("Error: Failed to create new Python dictionary.");
+//        return nullptr;
+//    }
+//
+//    IDictionaryEnumerator^ enumerator = managedDict->GetEnumerator();
+//    try {
+//        while (enumerator->MoveNext()) {
+//            DictionaryEntry entry = enumerator->Entry;
+//            Object^ managedKey = entry.Key;
+//            Object^ managedValue = entry.Value;
+//
+//            auto pKey = ExtensionMethods::ToManagedPyObject(managedKey);
+//
+//            if (!pKey->IsValid() || pKey->RawPointer == Py_None) {
+//                Console::WriteLine("Error: Converted key resulted in a non-hashable/null Python object. Skipping entry.");
+//                continue;
+//            }
+//
+//            auto pValue = ExtensionMethods::ToManagedPyObject(managedValue);
+//
+//            if (!pValue->IsValid()) {
+//                Console::WriteLine("Error: Failed to convert value for key '{0}'.", managedKey);
+//                return nullptr;
+//            }
+//
+//            if (PyDict_SetItem(pDict->RawPointer, pKey->Release(), pValue->Release()) < 0) {
+//                Console::WriteLine("Error: Failed to set item in Python dictionary.");
+//                return nullptr;
+//            }
+//        }
+//    }
+//    catch (Exception^ ex) {
+//        Console::WriteLine("An unexpected managed error occurred during iteration: {0}", ex->Message);
+//        return nullptr;
+//    }
+//
+//    return gcnew DynamicPyObjectCollection(pDict);
+//}
 
 void DotPython::PyContext::Execute(String^ code)
 {
