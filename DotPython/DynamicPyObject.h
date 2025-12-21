@@ -19,6 +19,7 @@ using namespace System::Linq::Expressions;
 using namespace msclr::interop;
 
 namespace DotPython {
+    [System::ComponentModel::EditorBrowsable(System::ComponentModel::EditorBrowsableState::Never)]
     public ref class DynamicPyObject : public DynamicObject, IDisposable
     {
     protected:

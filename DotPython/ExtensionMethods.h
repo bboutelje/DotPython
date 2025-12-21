@@ -11,7 +11,8 @@ using namespace System::Runtime::CompilerServices;
 namespace DotPython
 {
 
-	[Extension]
+	[System::Runtime::CompilerServices::Extension]
+	[System::ComponentModel::EditorBrowsable(System::ComponentModel::EditorBrowsableState::Never)]
 	public ref class ExtensionMethods abstract sealed {
 	public:
 

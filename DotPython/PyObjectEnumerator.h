@@ -9,6 +9,7 @@ using namespace System::Collections;
 using namespace System::Collections::Generic;
 
 namespace DotPython {
+    [System::ComponentModel::EditorBrowsable(System::ComponentModel::EditorBrowsableState::Never)]
     ref class PyObjectEnumerator : public DynamicPyObject, System::Collections::Generic::IEnumerator<DynamicPyObject^>
     {
     private:

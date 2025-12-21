@@ -17,6 +17,7 @@ typedef int(__cdecl* PyInitializeExFunc)(int);
 typedef int(__cdecl* PyFinalizeExFunc)(void);
 typedef void(__cdecl* PyRunSimpleStringFlagsFunc)(const char*, void*);
 
+[System::ComponentModel::EditorBrowsable(System::ComponentModel::EditorBrowsableState::Never)]
 public ref class PythonLoader
 {
 private:
@@ -27,7 +28,7 @@ private:
     PyRunSimpleStringFlagsFunc pyRunSimpleStringFlags;
     
 
-public:
+internal:
     PythonLoader() : pyDllHandle(NULL), pyInitializeEx(nullptr), pyFinalizeEx(nullptr), pyRunSimpleStringFlags(nullptr) {}
 
     !PythonLoader();
