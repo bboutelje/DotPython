@@ -5,6 +5,7 @@
 #include <msclr/marshal_cppstd.h>
 #include "ManagedPyObject.h"
 #include "DynamicPyObject.h"
+#include "utils.h"
 
 using namespace System;
 using namespace System::Runtime::CompilerServices;
@@ -16,7 +17,7 @@ namespace DotPython
 	public ref class ExtensionMethods abstract sealed {
 	internal:
 		
-		static ManagedPyObject^ ToManagedPyObject(Object^ managedObject);
+		//static ManagedPyObject^ ToManagedPyObject(Object^ managedObject);
 	public:
 		[returnvalue:System::Runtime::CompilerServices::DynamicAttribute]
 		[System::Runtime::CompilerServices::Extension]

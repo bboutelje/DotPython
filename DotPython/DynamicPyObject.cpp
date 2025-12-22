@@ -43,7 +43,7 @@ bool DotPython::DynamicPyObject::TryInvokeCallable(ManagedPyObject^ pyCallable, 
         auto pyArgs = gcnew ManagedPyObject(PyTuple_New(positionalArgCount));
         for (int i = 0; i < positionalArgCount; i++)
         {
-            auto managedPyObj = ExtensionMethods::ToManagedPyObject(args[i]);
+            auto managedPyObj = Utils::ToPythonObject(args[i]);
             PyTuple_SetItem(pyArgs->RawPointer, i, managedPyObj->Release());
         }
 
@@ -54,8 +54,8 @@ bool DotPython::DynamicPyObject::TryInvokeCallable(ManagedPyObject^ pyCallable, 
         {
             auto argValue = args[positionalArgCount + i];
 
-            auto managedPyKey = ExtensionMethods::ToManagedPyObject(argName);
-            auto mangedPyValue = ExtensionMethods::ToManagedPyObject(argValue);
+            auto managedPyKey = Utils::ToPythonObject(argName);
+            auto mangedPyValue = Utils::ToPythonObject(argValue);
 
             PyDict_SetItem(pyKwargs->RawPointer, managedPyKey->Release(), mangedPyValue->Release());
             i++;
@@ -75,7 +75,7 @@ bool DotPython::DynamicPyObject::TryInvokeCallable(ManagedPyObject^ pyCallable, 
         }
 
 
-        result = ConvertToManagedObject(pyResult);
+        result = Utils::ToManagedObject(pyResult);
 
         return true;
     }
@@ -157,7 +157,7 @@ bool DotPython::DynamicPyObject::TryGetMember(GetMemberBinder^ binder, Object^% 
         }
         else
         {
-            result = ConvertToManagedObject(gcnew ManagedPyObject(pPyAttribute->RawPointer));
+            result = Utils::ToManagedObject(gcnew ManagedPyObject(pPyAttribute->RawPointer));
         }
 
         return true;
@@ -178,7 +178,7 @@ bool DotPython::DynamicPyObject::TrySetMember(SetMemberBinder^ binder, Object^ v
         marshal_context context;
         const char* memberName = context.marshal_as<const char*>(binder->Name);
 
-        auto pPyValue = ExtensionMethods::ToManagedPyObject(value);
+        auto pPyValue = Utils::ToPythonObject(value);
         if (!pPyValue->RawPointer) {
             return false;
         }
@@ -217,7 +217,7 @@ bool DotPython::DynamicPyObject::TryInvokeMember(InvokeMemberBinder^ binder, arr
 bool DotPython::DynamicPyObject::TryBinaryOperation(System::Dynamic::BinaryOperationBinder^ binder, System::Object^ arg, System::Object^% result)
 {
     ManagedPyObject^ pPyLeft = m_managedPyObject;
-    ManagedPyObject^ pPyRight = ExtensionMethods::ToManagedPyObject(arg);
+    ManagedPyObject^ pPyRight = Utils::ToPythonObject(arg);
     ManagedPyObject^ pPyResult;
 
     result = nullptr;
@@ -286,7 +286,7 @@ bool DotPython::DynamicPyObject::TryBinaryOperation(System::Dynamic::BinaryOpera
             return false;
         }
 
-        result = ConvertToManagedObject(pPyResult);
+        result = Utils::ToPythonObject(pPyResult);
         return true;
     }
     catch (System::Exception^)
@@ -333,7 +333,7 @@ bool DotPython::DynamicPyObject::TryGetIndex(System::Dynamic::GetIndexBinder^ bi
 
     Object^ managedKey = indexes[0];
 
-    auto pyKey = ExtensionMethods::ToManagedPyObject(managedKey);
+    auto pyKey = Utils::ToPythonObject(managedKey);
 
     if (pyKey->RawPointer == nullptr)
     {
@@ -350,7 +350,7 @@ bool DotPython::DynamicPyObject::TryGetIndex(System::Dynamic::GetIndexBinder^ bi
         return false;
     }
 
-    result = ConvertToManagedObject(pyValue);
+    result = Utils::ToManagedObject(pyValue);
 
     return true;
 }
@@ -363,8 +363,8 @@ bool DotPython::DynamicPyObject::TrySetIndex(System::Dynamic::SetIndexBinder^ bi
     }
 
     Object^ managedKey = indexes[0];
-    auto pyKey = ExtensionMethods::ToManagedPyObject(managedKey);
-    auto pyValue = ExtensionMethods::ToManagedPyObject(value);
+    auto pyKey = Utils::ToPythonObject(managedKey);
+    auto pyValue = Utils::ToPythonObject(value);
 
     if (pyKey->RawPointer == nullptr || pyValue->RawPointer == nullptr)
     {

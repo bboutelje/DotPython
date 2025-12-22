@@ -1,4 +1,4 @@
-
+#pragma once
 #include <Python.h>
 #include <msclr/marshal.h>
 #include <msclr/marshal_cppstd.h>
@@ -8,8 +8,11 @@ using namespace System;
 
 namespace DotPython {
 
-	Object^ ConvertToManagedObject(ManagedPyObject^ pyObject);
-	//ManagedPyObject^ ConvertToPythonObject(Object^ managedObject);
+	private ref class Utils {
+	public:
+		static Object^ ToManagedObject(ManagedPyObject^ pyObject);
+		static ManagedPyObject^ ToPythonObject(Object^ managedObject);
+	};
 }
 
 
