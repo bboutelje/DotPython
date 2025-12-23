@@ -34,6 +34,18 @@ jobs:
         # Use $env:pythonLocation to access the path set by setup-python
         run: msbuild DotPython.sln /p:Configuration=Release /p:PYTHONDIR="$env:pythonLocation"
 
+      - name: Run Tests
+        shell: pwsh
+        run: |
+          # Prepend the Python location to the PATH so the Tests project can find the DLL
+          $env:Path = "${{ env.pythonLocation }};" + $env:Path
+          
+          # Optional: Verify the path contains Python for debugging
+          Write-Host "Current Path includes: $($env:Path.Split(';')[0])"
+          
+          dotnet test DotPython.Tests/DotPython.Tests.csproj --configuration Release --no-build --verbosity normal
+
+
       - name: Pack NuGet Package
         shell: pwsh
         run: |
