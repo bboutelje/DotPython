@@ -20,6 +20,8 @@ using namespace msclr::interop;
 
 namespace DotPython {
 
+    //ref class DynamicPyObject;
+    
     [System::ComponentModel::EditorBrowsable(System::ComponentModel::EditorBrowsableState::Never)]
     public ref class DynamicPyObject : public DynamicObject, IDisposable
     {
@@ -68,6 +70,9 @@ namespace DotPython {
             System::Dynamic::SetIndexBinder^ binder,
             array<Object^>^ indexes,
             Object^ value) override;
+
+
+        bool In(DynamicPyObject^ collection);
         
     };
 }

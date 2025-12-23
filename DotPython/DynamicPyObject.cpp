@@ -382,6 +382,22 @@ bool DotPython::DynamicPyObject::TrySetIndex(System::Dynamic::SetIndexBinder^ bi
     return true;
 }
 
+bool DotPython::DynamicPyObject::In(DynamicPyObject^ collection)
+{
+    if (collection == nullptr || !collection->GetManagedPyObject()->IsValid() || !m_managedPyObject->IsValid()) {
+        return false;
+    }
+
+    int result = PySequence_Contains(collection->GetManagedPyObject()->RawPointer, m_managedPyObject->RawPointer);
+
+    if (result == -1) {
+        PyErr_Clear();
+        return false;
+    }
+
+    return (result == 1);
+}
+
 
 //DynamicPyObject::DynamicPyObject(PyObject* pyObject)
 //{

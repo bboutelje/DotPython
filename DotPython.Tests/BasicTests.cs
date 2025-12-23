@@ -113,8 +113,9 @@ namespace DotPython.Tests
             var hashSet = new HashSet<string>() { "apple", "banana", "cherry" };
             var builtins = _pyContext!.Import("builtins");
             var pythonSet = builtins.set(hashSet);
-            hashSet.Remove("banana");
-            Assert.AreEqual(1, pythonSet.__contains__("apple"));
+            pythonSet.remove("banana");
+            Assert.IsTrue("apple".ToPython().In(pythonSet));
+            Assert.IsFalse("banana".ToPython().In(pythonSet));
         }
 
     }
